@@ -124,7 +124,8 @@ public class SSHSite {
 			session = createSession(logger);
 			channel = createChannel(logger, session);
 			channel.setCommand(command);
-			channel.setOutputStream(logger);
+			channel.setOutputStream(logger, true);
+			channel.setExtOutputStream(logger, true);
 			channel.setInputStream(null);
 			InputStream in = channel.getInputStream();
 			channel.connect();
