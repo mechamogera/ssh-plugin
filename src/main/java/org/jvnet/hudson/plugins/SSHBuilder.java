@@ -10,6 +10,8 @@ import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 
 import java.io.IOException;
+import java.lang.StringBuffer;
+import java.util.Map;
 
 import net.sf.json.JSONObject;
 
@@ -48,7 +50,12 @@ public class SSHBuilder extends Builder {
 		SSHSite site = getSite();
 		if (site != null && command != null && command.trim().length() > 0) {
 			listener.getLogger().printf("executing script:%n%s%n", command);
-			return site.executeCommand(listener.getLogger(), command) == 0;
+			StringBuffer cmd = new StringBuffer();
+			for (Map.Entry<String, String> e : build.getBuildVariables().entrySet()) {
+				cmd.append(String.format("%s=%s; export %s;\n", e.getKey(), e.getValue(), e.getKey()));
+			}
+                        cmd.append(command);
+			return site.executeCommand(listener.getLogger(), cmd.toString()) == 0;
 		}
 		return true;
 	}
