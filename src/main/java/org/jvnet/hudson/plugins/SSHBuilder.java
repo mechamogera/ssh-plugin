@@ -5,6 +5,7 @@ import hudson.Launcher;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
@@ -52,9 +53,12 @@ public class SSHBuilder extends Builder {
 			listener.getLogger().printf("executing script:%n%s%n", command);
 			StringBuffer cmd = new StringBuffer();
 			for (Map.Entry<String, String> e : build.getBuildVariables().entrySet()) {
-				cmd.append(String.format("%s=%s; export %s;\n", e.getKey(), e.getValue(), e.getKey()));
+				cmd.append(String.format("%s=\"%s\"; export %s;\n", e.getKey(), e.getValue(), e.getKey()));
 			}
-                        cmd.append(command);
+      for (Map.Entry<String, String> env : build.getEnvironment(TaskListener.NULL).entrySet()) {
+				cmd.append(String.format("JENKINS_%s=\"%s\"; export JENKINS_%s;\n", env.getKey(), env.getValue(), env.getKey()));
+      }
+      cmd.append(command);
 			return site.executeCommand(listener.getLogger(), cmd.toString()) == 0;
 		}
 		return true;
