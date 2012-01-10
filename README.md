@@ -4,11 +4,14 @@ jenkinsでssh-pluginを利用していますが、ビルドパラメータや[�
 
 ## ビルドパラメータ、環境変数の使い方
 ビルドパラメータはそのままの名前で使用できます。
+
 環境変数はJENKINS_を頭に付けると使用できます。
-  echo $hoge
-  echo $JENKINS_HOME
+
+    echo $hoge
+    echo $JENKINS_HOME
 
 ## その他
 実装としてはシェルで最初に以下を実行しているだけです。
-  [key]="[value]"; export [key];
+
+    [key]="[value]"; export [key];
 
